@@ -1,0 +1,114 @@
+{
+    "locations": [
+      {
+        "location": {
+          "area": "T Nagar",
+          "population_density": 25000,
+          "avg_income": 45000,
+          "existing_restaurants": 120,
+          "competition_score": 85,
+          "accessibility_score": 90,
+          "current_profit": 850000
+        }
+      },
+      {
+        "location": {
+          "area": "Anna Nagar",
+          "population_density": 22000,
+          "avg_income": 55000,
+          "existing_restaurants": 95,
+          "competition_score": 75,
+          "accessibility_score": 85,
+          "current_profit": 780000
+        }a
+      },
+      {
+        "location": {
+          "area": "Adyar",
+          "population_density": 18000,
+          "avg_income": 65000,
+          "existing_restaurants": 80,
+          "competition_score": 70,
+          "accessibility_score": 80,
+          "current_profit": 720000
+        }
+      },
+      {
+        "location": {
+          "area": "Velachery",
+          "population_density": 28000,
+          "avg_income": 35000,
+          "existing_restaurants": 65,
+          "competition_score": 60,
+          "accessibility_score": 75,
+          "current_profit": 650000
+        }
+      },
+      {
+        "location": {
+          "area": "Porur",
+          "population_density": 15000,
+          "avg_income": 40000,
+          "existing_restaurants": 45,
+          "competition_score": 50,
+          "accessibility_score": 70,
+          "current_profit": 580000
+        }
+      },
+      {
+        "location": {
+          "area": "OMR",
+          "population_density": 12000,
+          "avg_income": 70000,
+          "existing_restaurants": 55,
+          "competition_score": 65,
+          "accessibility_score": 85,
+          "current_profit": 750000
+        }
+      },
+      {
+        "location": {
+          "area": "Mylapore",
+          "population_density": 20000,
+          "avg_income": 48000,
+          "existing_restaurants": 70,
+          "competition_score": 75,
+          "accessibility_score": 80,
+          "current_profit": 680000
+        }
+      },
+      {
+        "location": {
+          "area": "Tambaram",
+          "population_density": 22000,
+          "avg_income": 32000,
+          "existing_restaurants": 50,
+          "competition_score": 55,
+          "accessibility_score": 65,
+          "current_profit": 520000
+        }
+      },
+      {
+        "location": {
+          "area": "Perungudi",
+          "population_density": 16000,
+          "avg_income": 42000,
+          "existing_restaurants": 40,
+          "competition_score": 45,
+          "accessibility_score": 70,
+          "current_profit": 550000
+        }
+      },
+      {
+        "location": {
+          "area": "Sholinganallur",
+          "population_density": 14000,
+          "avg_income": 60000,
+          "existing_restaurants": 35,
+          "competition_score": 40,
+          "accessibility_score": 75,
+          "current_profit": 620000
+        }
+      }
+    ]
+  } 

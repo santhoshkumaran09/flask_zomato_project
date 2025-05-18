@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>FoodDeliveryPro - Smart Location Analysis</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            padding: 20px;
+            position: relative;
+            overflow-x: hidden;
+            background-image: url('https://img.freepik.com/free-vector/cute-food-pattern-background_53876-129800.jpg');
+            background-size: cover;
+            background-attachment: fixed;
+        }
+
+        .overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
+            z-index: -1;
+        }
+
+        .card {
+            margin-bottom: 20px;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            border: none;
+            border-radius: 15px;
+            transition: transform 0.3s ease;
+            background: rgba(255, 255, 255, 0.95);
+        }
+
+        .card:hover {
+            transform: translateY(-5px);
+        }
+
+        .logo-container {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .logo {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto;
+            position: relative;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.1);
+        }
+
+        .logo svg {
+            width: 100%;
+            height: 100%;
+            filter: drop-shadow(0 8px 16px rgba(0, 0, 0, 0.2));
+        }
+
+        .logo-text {
+            font-size: 2.2em;
+            background: #000000;
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 800;
+            margin-top: 20px;
+            text-transform: uppercase;
+            letter-spacing: 3px;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from {
+                text-shadow: 0 0 10px #fff, 0 0 20px #fff, 0 0 30px #000000;
+            }
+            to {
+                text-shadow: 0 0 20px #fff, 0 0 30px #000000, 0 0 40px #000000;
+            }
+        }
+
+        .header {
+            background: linear-gradient(135deg, #FFD700, #000000);
+            color: black;
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .header::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="none" stroke="rgba(255,255,255,0.1)" stroke-width="2"/></svg>') center/cover;
+            opacity: 0.1;
+        }
+
+        .header h1 {
+            color: #000000;
+            font-weight: bold;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+        }
+
+        .header .lead {
+            color: #000000;
+            font-weight: 500;
+            text-shadow: 1px 1px 2px rgba(255, 255, 255, 0.5);
+        }
+
+        .rating {
+            font-size: 1.2em;
+            font-weight: bold;
+            padding: 5px 10px;
+            border-radius: 5px;
+            display: inline-block;
+            margin: 5px 0;
+        }
+
+        .predicted {
+            color: #28a745;
+            background: rgba(40, 167, 69, 0.1);
+        }
+
+        .actual {
+            color: #007bff;
+            background: rgba(0, 123, 255, 0.1);
+        }
+
+        .file-upload {
+            border: 3px dashed #FFD700;
+            border-radius: 20px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 30px;
+            background: rgba(255, 255, 255, 0.95);
+            transition: all 0.3s ease;
+        }
+
+        .file-upload:hover {
+            border-color: #000000;
+            background: rgba(255, 255, 255, 1);
+            transform: scale(1.02);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.1);
+        }
+
+        .error-message {
+            color: #dc3545;
+            margin-top: 10px;
+            font-weight: bold;
+        }
+
+        .btn-primary {
+            background: linear-gradient(45deg, #FFD700, #000000);
+            border: none;
+            padding: 15px 30px;
+            border-radius: 30px;
+            font-weight: bold;
+            letter-spacing: 1px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(255, 215, 0, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 215, 0, 0.4);
+            background: linear-gradient(45deg, #000000, #FFD700);
+        }
+
+        .restaurant-icon {
+            font-size: 2em;
+            margin-bottom: 15px;
+            color: #28a745;
+        }
+
+        .cuisine-tag {
+            background: #e9ecef;
+            padding: 5px 10px;
+            border-radius: 15px;
+            margin: 2px;
+            display: inline-block;
+            font-size: 0.9em;
+        }
+
+        .loading-animation {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 200px;
+        }
+
+        .loading-animation i {
+            font-size: 3em;
+            color: #28a745;
+            animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .floating {
+            animation: floating 3s ease-in-out infinite;
+        }
+
+        @keyframes floating {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .potential-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-weight: bold;
+            font-size: 0.9em;
+        }
+
+        .high-potential {
+            background-color: #FFD700;
+            color: black;
+        }
+
+        .medium-potential {
+            background-color: #000000;
+            color: white;
+        }
+
+        .low-potential {
+            background-color: #FFD700;
+            color: black;
+        }
+
+        .metric-card {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            border-left: 3px solid #FFD700;
+        }
+
+        .metric-card:hover {
+            transform: scale(1.02);
+            box-shadow: 0 12px 24px rgba(0, 0, 0, 0.15);
+        }
+
+        .metric-value {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #000000;
+        }
+
+        .metric-label {
+            font-size: 0.9em;
+            color: #FFD700;
+        }
+
+        .profit-value {
+            font-size: 1.4em;
+            font-weight: bold;
+            color: #000000;
+        }
+
+        .score-circle {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.4em;
+            font-weight: bold;
+            margin: 0 auto;
+            color: white;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
+            transition: all 0.3s ease;
+            background: linear-gradient(135deg, #FFD700, #000000);
+        }
+
+        .score-circle:hover {
+            transform: scale(1.1);
+        }
+
+        .score-high {
+            background: linear-gradient(135deg, #FFD700, #000000);
+        }
+
+        .score-medium {
+            background: linear-gradient(135deg, #000000, #FFD700);
+        }
+
+        .score-low {
+            background: linear-gradient(135deg, #FFD700, #000000);
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+            100% { transform: translateY(0px); }
+        }
+
+        .logo svg {
+            animation: float 3s ease-in-out infinite;
+        }
+
+        .insights-card {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-left: 4px solid #FFD700;
+        }
+
+        .insights-card h6 {
+            color: #000000;
+            font-weight: bold;
+        }
+
+        .insights-card li {
+            font-size: 0.9em;
+            color: #495057;
+        }
+
+        .badge {
+            font-size: 0.8em;
+            padding: 5px 10px;
+            border-radius: 15px;
+            background-color: #FFD700 !important;
+            color: black !important;
+        }
+
+        .badge.bg-success {
+            background-color: #000000 !important;
+            color: white !important;
+        }
+
+        .badge.bg-secondary {
+            background-color: #FFD700 !important;
+            color: black !important;
+        }
+
+        .profit-highlight {
+            background: linear-gradient(135deg, #FFD700, #000000);
+            color: black;
+        }
+
+        .profit-highlight .profit-value {
+            color: black;
+            font-size: 1.6em;
+        }
+
+        .profit-highlight .metric-label {
+            color: rgba(0, 0, 0, 0.9);
+        }
+
+        .profit-trend {
+            font-size: 0.9em;
+            color: #FFD700;
+            margin-top: 5px;
+        }
+
+        .profit-recommendations {
+            background: linear-gradient(135deg, #000000, #FFD700);
+            color: black;
+        }
+
+        .profit-recommendations h6 {
+            color: black;
+        }
+
+        .profit-recommendations li {
+            color: rgba(0, 0, 0, 0.9);
+            font-size: 0.9em;
+        }
+
+        .profit-recommendations i {
+            color: #000000;
+        }
+    </style>
+</head>
+<body>
+    <div class="overlay"></div>
+
+    <div class="container">
+        <div class="header text-center animate__animated animate__fadeIn">
+            <div class="logo-container">
+                <div class="logo animate__animated animate__fadeInDown">
+                    <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Background Circle with Gradient -->
+                        <defs>
+                            <linearGradient id="logoGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+                                <stop offset="0%" style="stop-color:#2C3E50"/>
+                                <stop offset="50%" style="stop-color:#95A5A6"/>
+                                <stop offset="100%" style="stop-color:#2C3E50"/>
+                            </linearGradient>
+                            <filter id="shadow">
+                                <feDropShadow dx="0" dy="4" stdDeviation="4" flood-color="#000" flood-opacity="0.2"/>
+                            </filter>
+                            <filter id="glow">
+                                <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+                                <feMerge>
+                                    <feMergeNode in="coloredBlur"/>
+                                    <feMergeNode in="SourceGraphic"/>
+                                </feMerge>
+                            </filter>
+                        </defs>
+                        
+                        <!-- Main Circle with Gradient -->
+                        <circle cx="100" cy="100" r="90" fill="#000000" filter="url(#shadow)"/>
+                        
+                        <!-- Delivery Scooter -->
+                        <g transform="translate(40, 60) scale(0.8)" filter="url(#glow)">
+                            <!-- Scooter Body -->
+                            <path d="M60 40C60 40 80 40 100 40C120 40 140 40 140 40C140 40 140 60 140 60C140 60 120 60 100 60C80 60 60 60 60 60Z" 
+                                  fill="white">
+                                <animate attributeName="d" 
+                                         dur="3s"
+                                         repeatCount="indefinite"
+                                         values="M60 40C60 40 80 40 100 40C120 40 140 40 140 40C140 40 140 60 140 60C140 60 120 60 100 60C80 60 60 60 60 60Z;
+                                                M60 42C60 42 80 42 100 42C120 42 140 42 140 42C140 42 140 58 140 58C140 58 120 58 100 58C80 58 60 58 60 58Z;
+                                                M60 40C60 40 80 40 100 40C120 40 140 40 140 40C140 40 140 60 140 60C140 60 120 60 100 60C80 60 60 60 60 60Z"/>
+                            </path>
+                            
+                            <!-- Wheels -->
+                            <circle cx="70" cy="70" r="15" fill="white" stroke="#000000" stroke-width="2">
+                                <animate attributeName="transform"
+                                         dur="2s"
+                                         repeatCount="indefinite"
+                                         values="rotate(0 70 70); rotate(360 70 70)"/>
+                            </circle>
+                            <circle cx="130" cy="70" r="15" fill="white" stroke="#000000" stroke-width="2">
+                                <animate attributeName="transform"
+                                         dur="2s"
+                                         repeatCount="indefinite"
+                                         values="rotate(0 130 70); rotate(360 130 70)"/>
+                            </circle>
+                            
+                            <!-- Food Box -->
+                            <rect x="80" y="30" width="40" height="30" rx="5" fill="white">
+                                <animate attributeName="y"
+                                         dur="2s"
+                                         repeatCount="indefinite"
+                                         values="30;28;30"/>
+                            </rect>
+                            
+                            <!-- Handlebar -->
+                            <path d="M60 40L50 30" stroke="white" stroke-width="3">
+                                <animate attributeName="d"
+                                         dur="2s"
+                                         repeatCount="indefinite"
+                                         values="M60 40L50 30; M60 40L50 32; M60 40L50 30"/>
+                            </path>
+                        </g>
+                        
+                        <!-- Location Pin -->
+                        <g transform="translate(100, 100) scale(0.6)" filter="url(#glow)">
+                            <path d="M0 0C0 0 0 -40 0 -40C0 -40 20 -60 40 -40C60 -20 0 0 0 0Z" 
+                                  fill="white">
+                                <animate attributeName="transform"
+                                         dur="3s"
+                                         repeatCount="indefinite"
+                                         values="scale(1); scale(1.1); scale(1)"/>
+                            </path>
+                            <circle cx="0" cy="-40" r="8" 
+                                    fill="white">
+                                <animate attributeName="r"
+                                         dur="2s"
+                                         repeatCount="indefinite"
+                                         values="8;10;8"/>
+                            </circle>
+                        </g>
+                        
+                        <!-- Decorative Elements -->
+                        <g>
+                            <!-- Animated Rings -->
+                            <circle cx="100" cy="100" r="95" fill="none" stroke="white" stroke-width="1" opacity="0.3">
+                                <animateTransform attributeName="transform"
+                                                type="rotate"
+                                                from="0 100 100"
+                                                to="360 100 100"
+                                                dur="20s"
+                                                repeatCount="indefinite"/>
+                            </circle>
+                            <circle cx="100" cy="100" r="85" fill="none" stroke="white" stroke-width="1" opacity="0.2">
+                                <animateTransform attributeName="transform"
+                                                type="rotate"
+                                                from="360 100 100"
+                                                to="0 100 100"
+                                                dur="15s"
+                                                repeatCount="indefinite"/>
+                            </circle>
+                            
+                            <!-- Sparkle Effects -->
+                            <g>
+                                <circle cx="30" cy="30" r="3" fill="white" opacity="0.8">
+                                    <animate attributeName="opacity" values="0.8;0.2;0.8" dur="2s" repeatCount="indefinite"/>
+                                    <animate attributeName="r" values="3;4;3" dur="2s" repeatCount="indefinite"/>
+                                </circle>
+                                <circle cx="170" cy="30" r="3" fill="white" opacity="0.8">
+                                    <animate attributeName="opacity" values="0.8;0.2;0.8" dur="2s" repeatCount="indefinite" begin="0.5s"/>
+                                    <animate attributeName="r" values="3;4;3" dur="2s" repeatCount="indefinite" begin="0.5s"/>
+                                </circle>
+                                <circle cx="30" cy="170" r="3" fill="white" opacity="0.8">
+                                    <animate attributeName="opacity" values="0.8;0.2;0.8" dur="2s" repeatCount="indefinite" begin="1s"/>
+                                    <animate attributeName="r" values="3;4;3" dur="2s" repeatCount="indefinite" begin="1s"/>
+                                </circle>
+                                <circle cx="170" cy="170" r="3" fill="white" opacity="0.8">
+                                    <animate attributeName="opacity" values="0.8;0.2;0.8" dur="2s" repeatCount="indefinite" begin="1.5s"/>
+                                    <animate attributeName="r" values="3;4;3" dur="2s" repeatCount="indefinite" begin="1.5s"/>
+                                </circle>
+                            </g>
+                        </g>
+                    </svg>
+                </div>
+                <div class="logo-text animate__animated animate__fadeInUp">FoodDeliveryPro</div>
+            </div>
+            <h1 class="animate__animated animate__fadeInUp">Smart Location Analysis for Food Delivery</h1>
+            <p class="lead animate__animated animate__fadeInUp">Make data-driven decisions for your food delivery business</p>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="card animate__animated animate__fadeInUp">
+                    <div class="card-body">
+                        <form id="uploadForm" class="mb-4">
+                            <div class="file-upload" id="dropZone">
+                                <input type="file" id="fileInput" accept=".json" style="display: none;">
+                                <div class="mb-3">
+                                    <i class="fas fa-cloud-upload-alt fa-3x mb-3 floating"></i>
+                                    <h5>Upload Location Data</h5>
+                                    <p>Drag & Drop JSON file here</p>
+                                    <button type="button" class="btn btn-outline-primary" onclick="document.getElementById('fileInput').click()">
+                                        <i class="fas fa-file-upload me-2"></i>Choose File
+                                    </button>
+                                    <p id="fileName" class="mt-2"></p>
+                                    <p id="errorMessage" class="error-message"></p>
+                                </div>
+                            </div>
+                            <button type="submit" class="btn btn-primary w-100" id="analyzeBtn" disabled>
+                                <i class="fas fa-chart-line me-2"></i>Analyze Locations
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="results" class="row"></div>
+    </div>
+
+    <script>
+        const dropZone = document.getElementById('dropZone');
+        const fileInput = document.getElementById('fileInput');
+        const fileName = document.getElementById('fileName');
+        const errorMessage = document.getElementById('errorMessage');
+        const analyzeBtn = document.getElementById('analyzeBtn');
+        const uploadForm = document.getElementById('uploadForm');
+
+        // Handle file selection
+        fileInput.addEventListener('change', handleFileSelect);
+        
+        // Handle drag and drop
+        dropZone.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#20c997';
+            dropZone.style.transform = 'scale(1.02)';
+        });
+
+        dropZone.addEventListener('dragleave', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#28a745';
+            dropZone.style.transform = 'scale(1)';
+        });
+
+        dropZone.addEventListener('drop', (e) => {
+            e.preventDefault();
+            dropZone.style.borderColor = '#28a745';
+            dropZone.style.transform = 'scale(1)';
+            const files = e.dataTransfer.files;
+            if (files.length) {
+                fileInput.files = files;
+                handleFileSelect();
+            }
+        });
+
+        function handleFileSelect() {
+            const file = fileInput.files[0];
+            errorMessage.textContent = '';
+            
+            if (file) {
+                console.log('File selected:', file.name);
+                if (file.name.endsWith('.json')) {
+                    fileName.innerHTML = `<i class="fas fa-file-code me-2"></i>Selected file: ${file.name}`;
+                    analyzeBtn.disabled = false;
+                } else {
+                    fileName.textContent = '';
+                    errorMessage.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i>Please select a JSON file';
+                    analyzeBtn.disabled = true;
+                }
+            }
+        }
+
+        uploadForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const file = fileInput.files[0];
+            const resultsDiv = document.getElementById('results');
+            errorMessage.textContent = '';
+            
+            if (!file) {
+                errorMessage.innerHTML = '<i class="fas fa-exclamation-circle me-2"></i>Please select a file first';
+                return;
+            }
+
+            console.log('Submitting file:', file.name);
+            resultsDiv.innerHTML = `
+                <div class="col-12">
+                    <div class="loading-animation">
+                        <i class="fas fa-spinner"></i>
+                    </div>
+                </div>
+            `;
+            analyzeBtn.disabled = true;
+
+            const formData = new FormData();
+            formData.append('file', file);
+
+            try {
+                console.log('Sending fetch POST to /analyze...');
+                const response = await fetch('/analyze', {
+                    method: 'POST',
+                    body: formData
+                });
+
+                console.log('Fetch response status:', response.status);
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('Response JSON:', data);
+
+                if (data.success) {
+                    resultsDiv.innerHTML = data.results.map(location => `
+                        <div class="col-md-6 col-lg-4 animate__animated animate__fadeInUp">
+                            <div class="card">
+                                <div class="card-body">
+                                    <h5 class="card-title">
+                                        <i class="fas fa-map-marker-alt me-2"></i>${location.area}
+                                        ${location.potential_score >= 70 ? 
+                                            '<span class="badge bg-success ms-2"><i class="fas fa-star me-1"></i>Top Profit Area</span>' : ''}
+                                    </h5>
+                                    <div class="text-center mb-3">
+                                        <div class="score-circle ${location.potential_score >= 70 ? 'score-high' : location.potential_score >= 40 ? 'score-medium' : 'score-low'}">
+                                            ${location.potential_score}%
+                                        </div>
+                                        <span class="potential-badge ${location.potential_score >= 70 ? 'high-potential' : location.potential_score >= 40 ? 'medium-potential' : 'low-potential'}">
+                                            ${location.recommendation}
+                                        </span>
+                                    </div>
+                                    <div class="metric-card profit-highlight">
+                                        <div class="profit-value">₹${location.predicted_profit.toLocaleString()}</div>
+                                        <div class="metric-label">Predicted Monthly Profit</div>
+                                        ${location.predicted_profit > 100000 ? 
+                                            '<div class="profit-trend"><i class="fas fa-arrow-up"></i> High Profit Potential</div>' : ''}
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="metric-card">
+                                                <div class="metric-value">${location.population_density.toLocaleString()}</div>
+                                                <div class="metric-label">Population Density</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="metric-card">
+                                                <div class="metric-value">₹${location.avg_income.toLocaleString()}</div>
+                                                <div class="metric-label">Avg. Income</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="row">
+                                        <div class="col-6">
+                                            <div class="metric-card">
+                                                <div class="metric-value">${location.existing_restaurants}</div>
+                                                <div class="metric-label">Existing Restaurants</div>
+                                            </div>
+                                        </div>
+                                        <div class="col-6">
+                                            <div class="metric-card">
+                                                <div class="metric-value">${location.competition_score}/100</div>
+                                                <div class="metric-label">Competition Score</div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value">${location.accessibility_score}/100</div>
+                                        <div class="metric-label">Accessibility Score</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value">${location.delivery_speed_score}/100</div>
+                                        <div class="metric-label">Delivery Speed Score</div>
+                                    </div>
+                                    <div class="metric-card">
+                                        <div class="metric-value">${location.existing_delivery_apps.length} Apps</div>
+                                        <div class="metric-label">Existing Delivery Apps</div>
+                                        <div class="mt-2">
+                                            ${location.existing_delivery_apps.map(app => 
+                                                `<span class="badge bg-secondary me-1">${app}</span>`
+                                            ).join('')}
+                                        </div>
+                                    </div>
+                                    <div class="metric-card insights-card">
+                                        <h6 class="mb-3"><i class="fas fa-lightbulb me-2"></i>Key Insights</h6>
+                                        <ul class="list-unstyled">
+                                            ${location.insights.map(insight => 
+                                                `<li class="mb-2"><i class="fas fa-check-circle text-success me-2"></i>${insight}</li>`
+                                            ).join('')}
+                                        </ul>
+                                    </div>
+                                    ${location.profit_recommendations && location.profit_recommendations.length > 0 ? `
+                                        <div class="metric-card profit-recommendations">
+                                            <h6 class="mb-3"><i class="fas fa-chart-line me-2"></i>Profit Recommendations</h6>
+                                            <ul class="list-unstyled">
+                                                ${location.profit_recommendations.map(rec => 
+                                                    `<li class="mb-2"><i class="fas fa-bullseye text-primary me-2"></i>${rec}</li>`
+                                                ).join('')}
+                                            </ul>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    resultsDiv.innerHTML = `
+                        <div class="col-12 animate__animated animate__fadeIn">
+                            <div class="alert alert-danger">
+                                <i class="fas fa-exclamation-triangle me-2"></i>${data.error}
+                            </div>
+                        </div>
+                    `;
+                }
+            } catch (error) {
+                console.error('Error during fetch or processing:', error);
+                resultsDiv.innerHTML = `
+                    <div class="col-12 animate__animated animate__fadeIn">
+                        <div class="alert alert-danger">
+                            <i class="fas fa-exclamation-triangle me-2"></i>Error: ${error.message}
+                        </div>
+                    </div>
+                `;
+            } finally {
+                analyzeBtn.disabled = false;
+            }
+        });
+    </script>
+</body>
+</html>
